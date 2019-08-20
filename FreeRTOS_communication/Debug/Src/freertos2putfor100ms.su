@@ -1,0 +1,6 @@
+freertos2putfor100ms.c:79:6:vApplicationGetIdleTaskMemory	24	static
+freertos2putfor100ms.c:93:6:MX_FREERTOS_Init	144	static
+freertos2putfor100ms.c:150:6:StartDefaultTask	16	static
+freertos2putfor100ms.c:174:6:StartTask02	24	static
+freertos2putfor100ms.c:201:6:StartTask03	24	static
+freertos2putfor100ms.c:229:6:StartTask04	16	static

@@ -1,0 +1,405 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * File Name          : freertos.c
+  * Description        : Code for freertos applications
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
+/* Includes ------------------------------------------------------------------*/
+#include "FreeRTOS.h"
+#include "task.h"
+#include "main.h"
+#include "cmsis_os.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */     
+#include <errno.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "adc.h"
+#include "i2c.h"
+#include <string.h>
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+//static int gresu_a_afficher;
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN Variables */
+
+/* USER CODE END Variables */
+osThreadId defaultTaskHandle;
+osThreadId myTask02Handle;
+osThreadId TaskInitAndAffiHandle;
+osThreadId TaskModeReglHandle;
+osMessageQId exchangeHandle;
+
+/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN FunctionPrototypes */
+   
+/* USER CODE END FunctionPrototypes */
+
+void StartDefaultTask(void const * argument);
+void StartTask02(void const * argument);
+void InitAndAffich(void const * argument);
+void ModeReglage(void const * argument);
+
+void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/* GetIdleTaskMemory prototype (linked to static allocation support) */
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize );
+
+/* USER CODE BEGIN GET_IDLE_TASK_MEMORY */
+static StaticTask_t xIdleTaskTCBBuffer;
+static StackType_t xIdleStack[configMINIMAL_STACK_SIZE];
+  
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize )
+{
+  *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
+  *ppxIdleTaskStackBuffer = &xIdleStack[0];
+  *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+  /* place for user code */
+}                   
+/* USER CODE END GET_IDLE_TASK_MEMORY */
+
+/**
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
+void MX_FREERTOS_Init(void) {
+  /* USER CODE BEGIN Init */
+       
+  /* USER CODE END Init */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* definition and creation of exchange */
+  osMessageQDef(exchange, 6, uint16_t);
+  exchangeHandle = osMessageCreate(osMessageQ(exchange), NULL);
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of myTask02 */
+  osThreadDef(myTask02, StartTask02, osPriorityIdle, 0, 128);
+  myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
+
+  /* definition and creation of TaskInitAndAffi */
+  osThreadDef(TaskInitAndAffi, InitAndAffich, osPriorityIdle, 0, 128);
+  TaskInitAndAffiHandle = osThreadCreate(osThread(TaskInitAndAffi), NULL);
+
+  /* definition and creation of TaskModeRegl */
+  osThreadDef(TaskModeRegl, ModeReglage, osPriorityIdle, 0, 128);
+  TaskModeReglHandle = osThreadCreate(osThread(TaskModeRegl), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+}
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used 
+  * @retval None
+  */
+
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void const * argument)
+{
+
+  /* USER CODE BEGIN StartDefaultTask */
+//	uint16_t adcResult = 0;
+//	TickType_t xLastWakeTime;
+//
+//	int start_tick = 0;
+//
+//	xLastWakeTime = xTaskGetTickCount();
+  /* Infinite loop */
+  for(;;)
+  {
+//	  start_tick = HAL_GetTick();
+//	  HAL_ADC_Start(&hadc1);
+//	  HAL_ADC_PollForConversion(&hadc1, 100);
+//	  adcResult = HAL_ADC_GetValue(&hadc1);
+//	  gresu_a_afficher = adcResult;
+//	  printf("luminosité : %d --->  start tick : %d\n", gresu_a_afficher, start_tick);
+//
+//	  osDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(PERIODE_MS));
+	  osDelay(1);
+  }
+  /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartTask02 */
+/**
+* @brief Function implementing the myTask02 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask02 */
+void StartTask02(void const * argument)
+{
+  /* USER CODE BEGIN StartTask02 */
+//	float led_allume;
+//	float led_eteinte;
+  /* Infinite loop */
+  for(;;)
+  {
+//	  led_allume = gresu_a_afficher / 400;
+//	  led_eteinte = 10.2375 - led_allume;
+//
+//	  if (gresu_a_afficher >= 60)
+//	  {
+//		  HAL_GPIO_WritePin(GPIOB, LD3_Pin, 1);
+//	  }
+//	  osDelay(led_allume);
+//	  if (gresu_a_afficher <= 3900)
+//	  {
+//		  HAL_GPIO_WritePin(GPIOB, LD3_Pin, 0);
+//	  }
+//	  osDelay(led_eteinte);
+	  osDelay(1);
+  }
+  /* USER CODE END StartTask02 */
+}
+
+/* USER CODE BEGIN Header_InitAndAffich */
+/**
+* @brief Function implementing the TaskInitAndAffi thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_InitAndAffich */
+void InitAndAffich(void const * argument)
+{
+  /* USER CODE BEGIN InitAndAffich */
+	uint8_t transmit_data_buffer[64];
+	uint8_t receive_data_buffer[64];
+	int octet_a_lire = 3;
+	adresse_rtc = 0b1101000 << 1;
+
+//	int date;
+//	int mois;
+//	int annee;
+
+	transmit_data_buffer[0] = 0b00000000;	//pointeur
+	transmit_data_buffer[1] = 0b00000000;	//sec
+	transmit_data_buffer[2] = 0b00010011;	//min
+	transmit_data_buffer[3] = 0b00001000;	//heure
+//	transmit_data_buffer[4] = 0b00000010;	//jour
+//	transmit_data_buffer[5] = 0b00110001;	//date
+//	transmit_data_buffer[6] = 0b00010010;	//mois
+//	transmit_data_buffer[7] = 0b00011001;	//annee
+
+//	HAL_I2C_Master_Transmit(&hi2c1, adresse_rtc, (uint8_t *)transmit_data_buffer, 4, 100);
+  /* Infinite loop */
+  for(;;)
+  {
+	  if(mode_reglage == 0)
+	  {
+		  printf("mode normal\n");
+		  HAL_I2C_Master_Transmit(&hi2c1, adresse_rtc, transmit_data_buffer, 1, 100);
+
+		  HAL_I2C_Master_Receive(&hi2c1, adresse_rtc, (uint8_t *)receive_data_buffer, octet_a_lire, 100);
+
+		  secondes = (receive_data_buffer[0] >> 4) * 10;
+		  secondes += receive_data_buffer[0] & MASQUE_UNITE;
+		  minutes = (receive_data_buffer[1] >> 4) * 10;
+		  minutes += receive_data_buffer[1] & MASQUE_UNITE;
+		  heures = (receive_data_buffer[2] >> 4) * 10;
+		  heures += receive_data_buffer[2] & MASQUE_UNITE;
+//		  jour = receive_data_buffer[3];
+//		  date = (receive_data_buffer[4] >> 4) * 10;
+//		  date += receive_data_buffer[4] & MASQUE_UNITE;
+//		  mois = (receive_data_buffer[5] >> 4) * 10;
+//		  mois += receive_data_buffer[5] & MASQUE_UNITE;
+//		  annee = (receive_data_buffer[6] >> 4) * 10;
+//		  annee += receive_data_buffer[6] & MASQUE_UNITE;
+
+		  printf("- %dh - %dmin - %dsec -\n", heures, minutes, secondes);
+//		  printf("- Date:%d/Month:%d/Year:20%d -\n\n", date, mois, annee);
+	  }
+	  osDelay(1000);
+//	  osDelay(1);
+  }
+  /* USER CODE END InitAndAffich */
+}
+
+/* USER CODE BEGIN Header_ModeReglage */
+/**
+* @brief Function implementing the TaskModeRegl thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_ModeReglage */
+void ModeReglage(void const * argument)
+{
+  /* USER CODE BEGIN ModeReglage */
+	int temp;
+	int temp2;
+	int sens = 1;
+	int champ = 1;
+	uint8_t transmit_data_buffer_reglage[64];
+  /* Infinite loop */
+  for(;;)
+  {
+	  if(mode_reglage == 1)
+	  {
+		  printf("mode reglage\n");
+		  switch(g_appui_touche)
+		  {
+		  	  case TOUCHE_GAUCHE:
+		  	  {
+		  		  printf("changement sens\n");
+		  		  g_appui_touche = 0;
+		  		  if(sens == 1){
+		  			  sens = -1;
+		  		  }
+		  		  else{
+		  			  sens = 1;
+		  		  }
+		  		  break;
+		  	  }
+		  	  case TOUCHE_MI_GAUCHE:
+			  {
+				  printf("champ suivant\n");
+				  g_appui_touche = 0;
+				  champ ++;
+				  if (champ > 3)
+				  {
+					  champ = 1;
+				  }
+				  break;
+			  }
+		  	  case TOUCHE_MI_DROITE:
+			  {
+				  printf("changement enregistré\n");
+				  g_appui_touche = 0;
+				  //pointeur
+				  transmit_data_buffer_reglage[0] = 0b00000000;
+				  //sec
+				  temp = secondes % 10;
+				  transmit_data_buffer_reglage[1] = temp;
+				  temp2 = secondes / 10;
+				  transmit_data_buffer_reglage[1] += (temp2 << 4);
+				  //min
+				  temp = minutes % 10;
+				  transmit_data_buffer_reglage[2] = temp;
+				  temp2 = minutes / 10;
+				  transmit_data_buffer_reglage[2] += (temp2 << 4);
+				  //heure
+				  temp = heures % 10;
+				  transmit_data_buffer_reglage[3] = temp;
+				  temp2 = heures / 10;
+				  transmit_data_buffer_reglage[3] += (temp2 << 4);
+				  //envoi
+				  HAL_I2C_Master_Transmit(&hi2c1, adresse_rtc, (uint8_t *)transmit_data_buffer_reglage, 4, 100);
+				  mode_reglage = 0;
+				  break;
+			  }
+		  	  case APPUI_BOUTON:
+			  {
+				  printf("valeur ++\n");
+				  g_appui_touche = 0;
+				  switch (champ)
+				  {
+					  case 1:
+					  {
+						  heures += sens;
+                          if((heures > 23)&&(sens == 1)){
+                              heures = 0;
+                          }
+                          if((heures == 255)&&(sens == -1)){
+                              heures = 23;
+                          }
+						  break;
+					  }
+					  case 2:
+					  {
+						  minutes += sens;
+                          if((minutes > 59)&&(sens == 1)){
+                              minutes = 0;
+                          }
+                          if((minutes == 255)&&(sens == -1)){
+                              minutes = 59;
+                          }
+						  break;
+					  }
+					  case 3:
+					  {
+						  secondes += sens;
+                          if((secondes > 59)&&(sens == 1)){
+                              secondes = 0;
+                          }
+                          if((secondes == 255)&&(sens == -1)){
+                              secondes = 59;
+                          }
+						  break;
+					  }
+				  }
+				  break;
+			  }
+		  	  default:
+			  {
+			      break;
+			  }
+		  }
+		  printf("- %dh - %dmin - %dsec -\n", heures, minutes, secondes);
+
+	  }
+	  osDelay(1000);
+  }
+  /* USER CODE END ModeReglage */
+}
+
+/* Private application code --------------------------------------------------*/
+/* USER CODE BEGIN Application */
+     
+/* USER CODE END Application */
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

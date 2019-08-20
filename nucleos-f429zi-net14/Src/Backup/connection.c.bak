@@ -1,0 +1,84 @@
+/*
+ * socket.c
+ *
+ *  Created on: 16 mai 2019
+ *      Author: killian
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <inet.h>	//inet_addr
+#include <errno.h>
+#include <string.h>
+#include "connection.h"
+
+
+
+//int lets_connect_not_used(const char *addr, int port)
+//{
+//	int socket_desc;
+//	struct sockaddr_in server;
+//
+//	//Create socket
+//	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
+//	if (socket_desc == -1)
+//	{
+//		printf("Could not create socket\n");
+//		printf("code d'erreur (n°%d) -%s\n", errno, strerror(errno));
+//	}
+//	server.sin_addr.s_addr = inet_addr(addr);
+//	server.sin_family = AF_INET;
+//	server.sin_port = htons(port);
+//
+//	//Connect to remote server
+//	if (connect(socket_desc , (struct sockaddr *)&server , sizeof(server)) < 0)
+//	{
+//		printf("connect error\n");
+//		return 1;
+//	}
+//
+//	printf("Connected\n");
+//	close(socket_desc);
+//
+//	return 0;
+//}
+
+char lets_connect(const char *addr, int port) {
+	int socket_desc;
+	struct sockaddr_in server;
+
+//Creation socket
+	socket_desc = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (socket_desc == -1) {
+		printf("Socket non créé\n");
+	}
+
+	server.sin_addr.s_addr = inet_addr(addr);
+	server.sin_family = AF_INET;
+	server.sin_port = htons(port);
+
+	//connection au serveur distant
+	if (connect(socket_desc, (struct sockaddr * )&server, sizeof(server)) < 0) {
+		printf("Erreur de connection\n");
+		return 1;
+	}
+
+	printf("Enfin connecté, \n");
+
+//envoi d'un msg au serveur
+	char *message;//il faut que ce soit declaré en pointeur
+
+	message = "bonjour t'es un bon\n";
+
+	if (send (socket_desc, message, strlen (message), 0) < 0) {
+		printf("Envoi échoué");
+		return 1;
+	}
+	printf("Envoi de données\n");
+
+	close(socket_desc); //Pensez à fermer la socket pour liberer la mémoir(evite l'erreur 105 "buffe not available")
+
+	return 0;
+}
