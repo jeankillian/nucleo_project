@@ -111,7 +111,7 @@ void Error_Handler(void);
 #define LD2_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 #define KLOG_IP 10.1.0.123
-#define KLOG_PORT 5514
+#define KLOG_PORT 5001
 #define KLOG_WANT_LOG
 
 

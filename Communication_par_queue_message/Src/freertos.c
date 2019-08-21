@@ -214,7 +214,6 @@ void StartTask03(void const * argument)
 		  osDelay(2000);
 	  }
 	  osDelay(1);
-
   }
   /* USER CODE END StartTask03 */
 }

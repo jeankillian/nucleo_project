@@ -40,8 +40,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-//static int gsocket_desc = -1;
-static int gsocket_desc_server = -1;
+static int gsocket_desc = -1;
+//static int gsocket_desc_server = -1;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -155,40 +155,40 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN StartDefaultTask */
 //  	char *message;
-  	int accepted_socket = 0;
+//  	int accepted_socket = 0;
 	/* Infinite loop */
 	for(;;)
 	{
-//		int ret;
-//		//create a socket and connect to the server
-//		if (gsocket_desc == -1)
-//		{
-//			gsocket_desc = lets_connect(ADRESSE_IP, PORTS);
-//		}
-//		//Send some data
-//		if (gsocket_desc >= 0)
-//		{
-//			ret = message_sent(gsocket_desc);
-//			if (ret <0)
-//			{
-//				close(gsocket_desc);
-//				gsocket_desc = -1;
-//			}
-//			else
-//				osDelay(3000);
-//		}
-		if (gsocket_desc_server == -1)
+		int ret;
+		//create a socket and connect to the server
+		if (gsocket_desc == -1)
 		{
-			gsocket_desc_server = lets_set_server(KLISTEN_PORT);
+			gsocket_desc = lets_connect(ADRESSE_IP, PORTS);
 		}
-		//waiting for connect from client
-		if (gsocket_desc_server >= 0)
+		//Send some data
+		if (gsocket_desc >= 0)
 		{
-			if(accepted_socket < 0)
+			ret = message_sent(gsocket_desc);
+			if (ret <0)
 			{
-				accepted_socket = server_accept(gsocket_desc_server);
+				close(gsocket_desc);
+				gsocket_desc = -1;
 			}
+			else
+				osDelay(3000);
 		}
+//		if (gsocket_desc_server == -1)
+//		{
+//			gsocket_desc_server = lets_set_server(KLISTEN_PORT);
+//		}
+//		//waiting for connect from client
+//		if (gsocket_desc_server >= 0)
+//		{
+//			if(accepted_socket < 0)
+//			{
+//				accepted_socket = server_accept(gsocket_desc_server);
+//			}
+//		}
 		osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
@@ -204,21 +204,21 @@ void StartDefaultTask(void const * argument)
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
-//	static char server_reply[TAILLE_MAX_MSG];
+	static char server_reply[TAILLE_MAX_MSG];
   /* Infinite loop */
   for(;;)
   {
-//	  int ret2;
-//	  //Receive a reply from the server
-//	  if (gsocket_desc >= 0)
-//	  {
-//		  ret2 = received_message(gsocket_desc, server_reply, TAILLE_MAX_MSG);
-//		  if (ret2 < 0)
-//		  {
-//			  close(gsocket_desc);
-//			  gsocket_desc = -1;
-//		  }
-//	  }
+	  int ret2;
+	  //Receive a reply from the server
+	  if (gsocket_desc >= 0)
+	  {
+		  ret2 = received_message(gsocket_desc, server_reply, TAILLE_MAX_MSG);
+		  if (ret2 < 0)
+		  {
+			  close(gsocket_desc);
+			  gsocket_desc = -1;
+		  }
+	  }
 	  osDelay(1);
   }
   /* USER CODE END StartTask02 */
@@ -240,15 +240,15 @@ void StartTask03(void const * argument)
   {
 //	  c = sizeof(struct sockaddr_in);
 		//create a socket and set the server
-		if (gsocket_desc_server == -1)
-		{
-			gsocket_desc_server = lets_set_server(KLISTEN_PORT);
-		}
+//		if (gsocket_desc_server == -1)
+//		{
+//			gsocket_desc_server = lets_set_server(KLISTEN_PORT);
+//		}
 		//waiting for connect from client
-		if (gsocket_desc_server >= 0)
-		{
-			server_accept(gsocket_desc_server);
-		}
+//		if (gsocket_desc_server >= 0)
+//		{
+//			server_accept(gsocket_desc_server);
+//		}
     osDelay(1);
   }
   /* USER CODE END StartTask03 */

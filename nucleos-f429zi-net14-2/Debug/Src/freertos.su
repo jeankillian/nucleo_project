@@ -1,6 +1,6 @@
 freertos.c:151:6:StartDefaultTask	8	static
-freertos.c:204:6:StartTask02	8	static
 freertos.c:234:6:StartTask03	8	static
 freertos.c:264:6:StartTask04	8	static
+freertos.c:204:6:StartTask02	8	static
 freertos.c:86:6:vApplicationGetIdleTaskMemory	0	static
 freertos.c:100:6:MX_FREERTOS_Init	128	static

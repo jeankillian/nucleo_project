@@ -41,7 +41,7 @@ int pupitre(void)
 	//Partie en cours
 	while(ingame == 1)
 	{
-		printf("DEBUT DE CE JEU DE CES MORTS !!! \n");
+		printf("DEBUT DU JEU ! \n");
 		printf("0 = stop \n"
 				"8 = haut \n"
 				"4 = gauche \n"

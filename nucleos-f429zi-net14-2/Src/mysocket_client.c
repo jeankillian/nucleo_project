@@ -10,8 +10,9 @@
 #include <sys/socket.h>
 #include <inet.h>	//inet_addr
 #include <errno.h>
-#include <mysocket_client.h>
 #include <string.h>
+#include <mysocket_client.h>
+
 
 //la socket sera fermé par l'appelant après utilisation
 //return -1 si probleme sinon

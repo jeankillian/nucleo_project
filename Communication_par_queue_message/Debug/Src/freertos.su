@@ -3,4 +3,4 @@ freertos.c:93:6:MX_FREERTOS_Init	144	static
 freertos.c:150:6:StartDefaultTask	16	static
 freertos.c:174:6:StartTask02	24	static
 freertos.c:201:6:StartTask03	24	static
-freertos.c:229:6:StartTask04	56	static
+freertos.c:228:6:StartTask04	56	static
